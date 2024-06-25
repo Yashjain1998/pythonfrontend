@@ -12,20 +12,48 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-
-
+import { useCookies } from 'react-cookie';
+import Main from '../main.js'
+import { useNavigate } from 'react-router-dom';
 // TODO remove, this demo shouldn't need to reset the theme.
 
 const defaultTheme = createTheme();
 
 export default function SignIn() {
-  const handleSubmit = (event) => {
+  const navigate = useNavigate();
+  const [cookies, setCookie] = useCookies(["user"]);
+  const handleSubmit = async(event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     console.log({
       email: data.get('email'),
       password: data.get('password'),
     });
+    try {
+      const response = await fetch(`${Main.URL}/login`, {
+        method: "POST",
+        body: JSON.stringify({
+          email: data.get("email"),
+          password: data.get("password"),
+        }),
+        headers: {
+          "content-Type": "application/json",
+        },
+      });
+      if(response.status===201){
+        console.log("user login suceessfull")
+        const userdata= await response.json()
+        console.log(userdata)
+        setCookie('user', userdata.token)
+        navigate('/user');
+      }else{
+        console.error("error")
+        const err=await response.json()
+        console.log(err)
+      }
+    } catch (error) {
+      console.log(error)
+    }
   };
 
   return (
