@@ -1,33 +1,21 @@
-import './App.css';
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import SignIn from './Components/SignIn';
-import SignUp from './Components/signUp';
-import Dashboard  from './Components/dashboard';
+import React, { useState } from 'react';
+import FormComponent from './components/FormComponent';
+import ResultComponent from './components/ResultComponent';
 
+const App = () => {
+  const [response, setResponse] = useState(null);
 
+  const handleResponse = (data) => {
+    setResponse(data);
+  };
 
-
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <SignIn />,
-
-  },
-  {
-    path: "/signup",
-    element: <SignUp />
-  },
-  {
-    path: "/user",
-    element: <Dashboard />
-  },
-])
-
-
-function App() {
   return (
-    <RouterProvider router={router}></RouterProvider>
+    <div>
+      <h1>Health Plan Generator</h1>
+      <FormComponent onResponse={handleResponse} />
+      {response && <ResultComponent data={response} />}
+    </div>
   );
-}
+};
 
 export default App;
